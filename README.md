@@ -17,5 +17,24 @@ sls invoke local -f scrape -d "ffionas-restaurant-london"
 ```
 with ```-d``` you can pass event parameters to the function.
 
+Step 7:
+Create a dynamoDB table in AWS site.
 
+Step 8:
+Amend serverless.yml file.
+For default
+```yaml
+provider:
+  ...
+  stage: dev  # default stage.
+  region: eu-west-2
+```
+add iamRoleStatements as well.
+
+Make sure to include other folders like below:
+```yaml
+package:
+  include:
+    - utils/**
+```
 

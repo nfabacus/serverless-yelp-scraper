@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: aws-nodejs # NOTE: update this with your service name
+service: yelp-scraper # NOTE: update this with your service name
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -20,17 +20,25 @@ service: aws-nodejs # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
+  region: eu-west-2
+  stage: dev  # default stage.
+  environment: # setting environmental variables
+    DYNAMODB_TABLE: yelp-ratings
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb: Query
+        - dynamodb: Scan
+        - dynamodb: GetItem
+        - dynamodb: PutItem
+        - dynamodb: UpdateItem
+        - dynamodb: DeleteItem
 #        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+package:
+  include:
+    - utils/**
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:PutObject"
@@ -102,3 +110,21 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+        -
+          AttributeName: id
+          AttributeType: S
+        KeySchema:
+        -
+          AttributeName: id
+          KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}

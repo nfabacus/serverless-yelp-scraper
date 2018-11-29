@@ -10,11 +10,16 @@ module.exports.scrape = async (event, context) => {
   // 2. parse the page
   const yelpData = await parsePage(page);
   // 3. save ratings data to our db
-  await saveRatingsToDB(yelpData);
+  try {
+    const message = await saveRatingsToDB(yelpData, event);
+    console.log("message>>>", message);
+  } catch(err) {
+    throw new Error(`Error scraping ${event}: ${JSON.stringify(err)}`);
+  }
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
+      message: `Scraped ${event}`,
       input: event,
     }),
   };
