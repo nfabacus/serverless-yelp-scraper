@@ -17,4 +17,6 @@ module.exports.scrape = (event, context, callback) => {
     }
   };
   scrapePage();
+  // adding return or callback to this handler.js will prevent dynamoDB to save the data for some reason..
+  // for now, I will not add return or callback to this handler.js.
 };
