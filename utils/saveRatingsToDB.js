@@ -11,22 +11,19 @@ module.exports = (yelpData, businessName) => {
       id: uuid.v1(),
       businessName: businessName,
       reviewCount: yelpData.reviewCount,
-      rating: yelpData.ratings,
+      rating: yelpData.rating,
       scrapedAt: date
     }
   };
-  console.log('params>>>', params);
+
   dynamoDb.put(params, error => {
-    console.log("inside dynamoDb callback");
     if (error) {
       console.error(`Error saving data to DynamoDB: ${JSON.stringify(error)}`);
       return Promise.reject(
         `Error saving data to DynamoDB: ${JSON.stringify(error)}`
       );
     } else {
-      console.log('SUCCESS!!');
       return Promise.resolve(params.Item);
     }
   });
-
 };
