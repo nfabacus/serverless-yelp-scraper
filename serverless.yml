@@ -1,5 +1,8 @@
 service: yelp-scraper
 
+plugins:
+  - serverless-offline-scheduler
+
 provider:
   name: aws
   runtime: nodejs6.10
@@ -8,6 +11,10 @@ provider:
   environment:
     DYNAMODB_TABLE: yelp-ratings
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -46,6 +53,10 @@ functions:
   scrape:
     handler: handler.scrape
 
+  launch_scrapers:
+    handler: handler.launch_scrapers
+    events:
+      - schedule: rate(1 minute)
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

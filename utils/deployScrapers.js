@@ -1,13 +1,6 @@
-const request = require("request-promise");
 const AWS = require("aws-sdk");
 
-const list = [
-  "urban-light-at-lacma-los-angeles",
-  "the-museum-of-contemporary-art-los-angeles",
-  "the-last-bookstore-los-angeles"
-];
-
-function deployScraper(businessName) {
+module.exports = (businessName) => {
   const lambda = new AWS.Lambda({
     region: "eu-west-2"
   });
@@ -28,12 +21,4 @@ function deployScraper(businessName) {
       return JSON.stringify(data);
     }
   });
-}
-
-function swarm(arr) {
-  arr.forEach(businessName => {
-    deployScraper(businessName);
-  });
-}
-
-swarm(list);
+};
